@@ -1,30 +1,46 @@
-import { Task } from "./domain";
+import type { Task, Answer } from "./domain";
+import { TaskCard } from "./TaskCard";
 
 type TaskListProps = {
-  tasks: Task[];
-  selectedId: string | null;
-  onChoose: (id: string) => void;
+  task: Task;
+  answer: Answer | undefined;
+  onAnswerChange: (answer: Answer) => void;
+  onPrev: () => void;
+  onNext: () => void;
+  onFinish: () => void;
+  canGoPrev: boolean;
+  canGoNext: boolean;
 };
 
-export function TaskList({ tasks, selectedId, onChoose }: TaskListProps) {
+export function TaskList({
+  task,
+  answer,
+  onAnswerChange,
+  onPrev,
+  onNext,
+  onFinish,
+  canGoPrev,
+  canGoNext,
+}: TaskListProps) {
   return (
-    <nav style={{ display: "flex", flexDirection: "column", gap: "8px", marginBottom: "20px" }}>
-      {tasks.map((task) => (
-        <button
-          key={task.id}
-          onClick={() => onChoose(task.id)}
-          aria-current={selectedId === task.id ? "true" : undefined}
-          style={{
-            padding: "10px",
-            textAlign: "left",
-            fontWeight: selectedId === task.id ? "bold" : "normal",
-            cursor: "pointer",
-            fontSize: "1rem",
-          }}
-        >
-          {task.topic}
+    <div>
+      <TaskCard task={task} answer={answer} onChange={onAnswerChange} />
+      
+      <div style={{ display: "flex", gap: 8, marginTop: 16 }}>
+        <button type="button" onClick={onPrev} disabled={!canGoPrev}>
+          ← Назад
         </button>
-      ))}
-    </nav>
+        
+        {canGoNext ? (
+          <button type="button" onClick={onNext}>
+            Далее →
+          </button>
+        ) : (
+          <button type="button" onClick={onFinish} style={{ fontWeight: "bold" }}>
+            Завершить
+          </button>
+        )}
+      </div>
+    </div>
   );
 }
